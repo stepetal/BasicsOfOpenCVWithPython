@@ -20,6 +20,10 @@ def show_image_with_matplotlib(image,title="Image"):
     plt.yticks([])
     plt.imshow(image)
 
+
+    
+    
+
 def argument_parser():
     '''
     Create and initialize parser of script arguments
@@ -65,10 +69,7 @@ def basic_operations_with_images(image_path):
     grayscale_image = cv2.cvtColor(image_mpl,cv2.COLOR_RGB2GRAY)
     cv2.imwrite("grayscale_image.jpg",grayscale_image)
     # create white canvas for drawing
-    cv2.namedWindow('Image_window');
-    # creating of trackbar for rotatin image
-    cv2.createTrackbar('Rotate','Image_window',0,360,lambda value: print("Cur angle is: {}".format(value)))
-    print("Trackbar pos: {}".format(cv2.getTrackbarPos('Rotate','Image_window')))
+
     canvas = np.ones((600,600,3))
     width = canvas.shape[1]
     height = canvas.shape[0]
@@ -79,18 +80,44 @@ def basic_operations_with_images(image_path):
     # drawing circle
     canvas = cv2.circle(canvas,(int(width/2),int(height/2)),20,(0,255,0))
     # drawing text
-    canvas = cv2.putText(canvas,"Type q for exit",(0,int(height/2)),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),None,cv2.LINE_AA)
-    # rotating of canvas with trackbar
-    while True:
-        cv2.imshow("Image_window",canvas)
-        angle = cv2.getTrackbarPos('Rotate','Image_window')
-        if angle % 90 == 0 and angle != 0:
-            canvas = cv2.rotate(canvas,cv2.ROTATE_90_CLOCKWISE)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    
-    
-    
+    canvas = cv2.putText(canvas,"Basic shapes",(10,int(height/2)),cv2.FONT_HERSHEY_PLAIN,0.5,(0,0,0),None,cv2.LINE_AA)
+    show_image_with_matplotlib(canvas,"Basic primitives")
+    # splitting and merging channels
+    # get values of r,g,b and change image color
+    hsv_image = cv2.cvtColor(image_mpl,cv2.COLOR_RGB2HSV)
+    (h,s,v) = cv2.split(hsv_image)
+    hsv_image = cv2.merge((h,s,v))
+    cv2.namedWindow('Image_window',cv2.WINDOW_NORMAL);
+    new_canvas = np.ones(image_mpl.shape,dtype = np.uint8)
+    value = 0
+    # creating of trackbars for changing red,green and blue componetns of image
+    cv2.createTrackbar('R',
+                       'Image_window',
+                       0,
+                       255,
+                       lambda value: cv2.imshow("Image_window",
+                                                cv2.merge((cv2.split(new_canvas)[0], cv2.split(new_canvas)[1],np.ones(new_canvas.shape[:2],dtype = np.uint8) * value))
+                                                )
+                       )
+    cv2.createTrackbar('G',
+                       'Image_window',
+                       0,
+                       255,
+                       lambda value: cv2.imshow("Image_window",
+                                                cv2.merge((cv2.split(new_canvas)[0], np.ones(new_canvas.shape[:2],dtype = np.uint8) * value,cv2.split(new_canvas)[2]))
+                                                )
+                       )
+    cv2.createTrackbar('B',
+                       'Image_window',
+                       0,
+                       255,
+                       lambda value: 
+                                     cv2.imshow("Image_window",
+                                                 cv2.merge((np.ones(new_canvas.shape[:2],dtype = np.uint8) * value,cv2.split(new_canvas)[1],cv2.split(new_canvas)[2]))
+                                                )
+                       )
+    cv2.waitKey(0)
+
 
 def basic_operations_with_videos(video_path):
     '''

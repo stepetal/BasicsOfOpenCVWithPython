@@ -12,6 +12,14 @@ sns.set()
 import argparse
 from sklearn.datasets import load_sample_image
 
+def show_image_with_matplotlib(image,title="Image"):
+    plt.figure(figsize = (8,8))
+    plt.title(title)
+    plt.grid(False)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(image)
+
 def argument_parser():
     '''
     Create and initialize parser of script arguments
@@ -51,16 +59,26 @@ def basic_operations_with_images(image_path):
         image_mpl = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
     else:
         image_mpl = load_sample_image(image_path)
-        #show original image
-    plt.figure(figsize = (8,8))
-    plt.title("Image")
-    plt.grid(False)
-    plt.xticks([])
-    plt.yticks([])
-    plt.imshow(image_mpl)
+    #show original image
+    show_image_with_matplotlib(image_mpl)
     # create grayscale image from original matplotlib image
     grayscale_image = cv2.cvtColor(image_mpl,cv2.COLOR_RGB2GRAY)
     cv2.imwrite("grayscale_image.jpg",grayscale_image)
+    # create white canvas for drawing
+    canvas = np.ones((600,600,3))
+    width = canvas.shape[1]
+    height = canvas.shape[0]
+    # drawing line
+    canvas = cv2.line(canvas,(0,0),(width,height),(0,0,255))
+    # drawing rectangle
+    canvas = cv2.rectangle(canvas,(0,0),(int(width/2),int(height/2)),(255,0,0))
+    # drawing circle
+    canvas = cv2.circle(canvas,(int(width/2),int(height/2)),20,(0,255,0))
+    # drawing text
+    canvas = cv2.putText(canvas,"Basic shapes",(0,int(height/2)),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),None,cv2.LINE_AA)
+    show_image_with_matplotlib(canvas,"Drawing primitives")
+    
+    
 
 def basic_operations_with_videos(video_path):
     '''

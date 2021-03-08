@@ -20,9 +20,32 @@ def show_image_with_matplotlib(image,title="Image"):
     plt.yticks([])
     plt.imshow(image)
 
+def update_image_channels(image,value,ch):
+    '''
+    Update value for specified channel
 
-    
-    
+    Parameters
+    ----------
+    image : numpy ndarray
+        Input image
+    value : int
+        New value for channel
+    ch : str
+        Channel id
+
+    Returns
+    -------
+    None.
+
+    '''
+    if ch == 'b':
+        image[:,:,0] = np.ones(image.shape[:2],dtype = np.uint8) * value
+    if ch == 'g':
+        image[:,:,1] = np.ones(image.shape[:2],dtype = np.uint8) * value
+    if ch == 'r':
+        image[:,:,2] = np.ones(image.shape[:2],dtype = np.uint8) * value
+    cv2.imshow("Image_window",image)
+
 
 def argument_parser():
     '''
@@ -87,35 +110,28 @@ def basic_operations_with_images(image_path):
     hsv_image = cv2.cvtColor(image_mpl,cv2.COLOR_RGB2HSV)
     (h,s,v) = cv2.split(hsv_image)
     hsv_image = cv2.merge((h,s,v))
+    # update channels values with trackbars
     cv2.namedWindow('Image_window',cv2.WINDOW_NORMAL);
     new_canvas = np.ones(image_mpl.shape,dtype = np.uint8)
-    value = 0
-    # creating of trackbars for changing red,green and blue componetns of image
     cv2.createTrackbar('R',
                        'Image_window',
                        0,
                        255,
-                       lambda value: cv2.imshow("Image_window",
-                                                cv2.merge((cv2.split(new_canvas)[0], cv2.split(new_canvas)[1],np.ones(new_canvas.shape[:2],dtype = np.uint8) * value))
-                                                )
+                       lambda value: update_image_channels(new_canvas,value,'r')
                        )
     cv2.createTrackbar('G',
                        'Image_window',
                        0,
                        255,
-                       lambda value: cv2.imshow("Image_window",
-                                                cv2.merge((cv2.split(new_canvas)[0], np.ones(new_canvas.shape[:2],dtype = np.uint8) * value,cv2.split(new_canvas)[2]))
-                                                )
+                       lambda value: update_image_channels(new_canvas,value,'g')
                        )
     cv2.createTrackbar('B',
                        'Image_window',
                        0,
                        255,
-                       lambda value: 
-                                     cv2.imshow("Image_window",
-                                                 cv2.merge((np.ones(new_canvas.shape[:2],dtype = np.uint8) * value,cv2.split(new_canvas)[1],cv2.split(new_canvas)[2]))
-                                                )
+                       lambda value: update_image_channels(new_canvas,value,'b')
                        )
+    
     cv2.waitKey(0)
 
 

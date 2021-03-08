@@ -65,6 +65,10 @@ def basic_operations_with_images(image_path):
     grayscale_image = cv2.cvtColor(image_mpl,cv2.COLOR_RGB2GRAY)
     cv2.imwrite("grayscale_image.jpg",grayscale_image)
     # create white canvas for drawing
+    cv2.namedWindow('Image_window');
+    # creating of trackbar for rotatin image
+    cv2.createTrackbar('Rotate','Image_window',0,360,lambda value: print("Cur angle is: {}".format(value)))
+    print("Trackbar pos: {}".format(cv2.getTrackbarPos('Rotate','Image_window')))
     canvas = np.ones((600,600,3))
     width = canvas.shape[1]
     height = canvas.shape[0]
@@ -75,8 +79,16 @@ def basic_operations_with_images(image_path):
     # drawing circle
     canvas = cv2.circle(canvas,(int(width/2),int(height/2)),20,(0,255,0))
     # drawing text
-    canvas = cv2.putText(canvas,"Basic shapes",(0,int(height/2)),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),None,cv2.LINE_AA)
-    show_image_with_matplotlib(canvas,"Drawing primitives")
+    canvas = cv2.putText(canvas,"Type q for exit",(0,int(height/2)),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),None,cv2.LINE_AA)
+    # rotating of canvas with trackbar
+    while True:
+        cv2.imshow("Image_window",canvas)
+        angle = cv2.getTrackbarPos('Rotate','Image_window')
+        if angle % 90 == 0 and angle != 0:
+            canvas = cv2.rotate(canvas,cv2.ROTATE_90_CLOCKWISE)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    
     
     
 

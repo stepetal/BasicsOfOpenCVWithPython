@@ -226,6 +226,41 @@ def show_execution_time():
     t2 = cv2.getTickCount()
     delta_t = (t2 - t1) / cv2.getTickFrequency()
     print("Duration is: {} seconds".format(delta_t))
+    
+def gamma_correction(grayscale_image):
+    '''
+    Procedure for demonstration non-linear operation that adjusts pixel intensities
+    '''
+    image = grayscale_image.astype(np.float32) / 255
+    gamma = 0.5
+    corrected_image = np.power(image,gamma)
+    print("Image type is: {}".format(image.dtype))
+    #grayscale_image = np.array(grayscale_image * 255).astype(np.uint8)
+    #show_image_with_matplotlib(grayscale_image,"Original image")
+    #show_image_with_matplotlib(corrected_image,"Corrected image")
+    cv2.imshow("original image",grayscale_image)
+    cv2.imshow("Corrected image",corrected_image)
+    
+def plot_image_histogram(grayscale_image):
+    '''
+    Procedure for finding and plotting histogram of an image
+    '''
+    eq_hist_grayscale_image = cv2.equalizeHist(grayscale_image)
+    eq_hist,eq_bins = np.histogram(eq_hist_grayscale_image,256,range = [0,255])
+    
+    hist,bins = np.histogram(grayscale_image,256,range = [0,255])
+    
+    plt.figure(figsize = (10,10))
+    plt.title('Grayscale image histogram')
+    plt.fill(hist)
+    plt.xlabel('pixel value')
+    
+    plt.figure(figsize = (10,10))
+    plt.title('Grayscale image normalized histogram')
+    plt.fill_between(range(256),eq_hist,0)
+    plt.xlabel('pixel value')
+    
+    
 
 def image_thresholding(grayscale_image):
     '''
@@ -385,7 +420,7 @@ def basic_operations_with_images(image_path):
     grayscale_image = cv2.cvtColor(image_mpl,cv2.COLOR_RGB2GRAY)
     cv2.imwrite("grayscale_image.jpg",grayscale_image)
     
-    contour_finding();
+    plot_image_histogram(grayscale_image)
     
 
 
